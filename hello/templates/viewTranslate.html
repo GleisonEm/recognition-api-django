@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <p>Translate Text</p>
+    <p></p>
+    <p></p>
+    <!-- <li>{{ translateText }}</li> -->
+    <ul>
+
+        {% for text in translateTexts %}
+        <li>{{ text }}</li>
+        {% endfor %}
+
+    </ul>
+
+</div>
+
+{% endblock %}

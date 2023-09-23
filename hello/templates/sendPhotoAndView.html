@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <h2>Upload and Translate Image</h2>
+
+  <div id="custom-input" class="custom-input">
+    <form method="post" enctype="multipart/form-data"
+      action="{% url 'viewTranslatePhoto' %}">
+      {% csrf_token %}
+      <label for="image-input">Drag and drop an image or paste it here:</label>
+      <input
+        type="file" name="image" id="image-input" accept="image/*"
+        style="display: none;">
+      <button type="submit">Upload and Translate</button>
+    </form>
+  </div>
+
+  <div id="image-preview" class="image-preview">
+    <!-- Preview of the uploaded image will be displayed here -->
+  </div>
+
+  <div id="translation-result" class="translation-result">
+    <!-- Translation result will be displayed here -->
+  </div>
+</div>
+
+<script>
+  // ... Seu código existente ...
+  const customInput = document.getElementById('custom-input');
+  const imageInput = document.getElementById('image-input');
+  const imagePreview = document.getElementById('image-preview');
+
+  customInput.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    customInput.classList.add('dragover');
+  });
+
+  customInput.addEventListener('dragleave', () => {
+    customInput.classList.remove('dragover');
+  });
+
+customInput.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  customInput.classList.remove('dragover');
+
+  const droppedFile = e.dataTransfer.files[0];
+  const fileBlob = await droppedFile.arrayBuffer();
+  const newFile = new File([fileBlob], 'dropped_image.png', { type: droppedFile.type });
+
+  // Atribuir o arquivo ao input
+  const imageInput = document.getElementById('image-input');
+  const fileList = new DataTransfer();
+  fileList.items.add(newFile);
+  imageInput.files = fileList.files;
+
+  handleImageUpload(newFile);
+});
+
+  imageInput.addEventListener('change', (e) => {
+    handleImageUpload(e.target.files[0]);
+  });
+
+document.addEventListener('paste', async (e) => {
+  const items = e.clipboardData.items;
+  for (const item of items) {
+    if (item.type.indexOf('image') !== -1) {
+      const blob = await item.getAsFile().arrayBuffer();
+      const file = new File([blob], 'pasted_image.png', { type: 'image/png' });
+
+      // Atribuir o arquivo ao input
+      const imageInput = document.getElementById('image-input');
+      const fileList = new DataTransfer();
+      fileList.items.add(file);
+      imageInput.files = fileList.files;
+
+      handleImageUpload(file);
+      break;
+    }
+  }
+});
+  function handleImageUpload(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image" />`;
+    };
+    reader.readAsDataURL(file);
+  }
+  const translationResult = document.getElementById('translation-result');
+
+  async function translateAndDisplayResult() {
+    const formData = new FormData();
+    formData.append('image', imageInput.files[0]);
+
+    try {
+      const response = await fetch('{% url "extractText" %}', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data", data)
+        translationResult.textContent = data.text;
+      } else {
+        translationResult.textContent = '<p>Error translating the image.</p>';
+      }
+    } catch (error) {
+      translationResult.textContent = '<p>An error occurred while making the request.</p>';
+    }
+  }
+
+  // Event listener for the translation button
+  const translateButton = document.querySelector('button[type="submit"]');
+  translateButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    translateAndDisplayResult();
+  });
+</script>
+
+<style>
+  /* ... Seu estilo existente ... */
+    .custom-input {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .custom-input.dragover {
+    background-color: #f0f0f0;
+  }
+
+  .image-preview {
+    margin-top: 20px;
+  }
+
+  .translation-result {
+    margin-top: 20px;
+  }
+</style>
+{% endblock %}

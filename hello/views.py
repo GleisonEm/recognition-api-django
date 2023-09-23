@@ -1,6 +1,12 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
+from .models import Translate
+from .models import Photo
+from .models import Audio
 from .models import Greeting
+# from .models import Base64ToWavConverter
 
 # Create your views here.
 
@@ -8,6 +14,85 @@ from .models import Greeting
 def index(request):
     return render(request, "index.html")
 
+def sendPhoto(request):
+    return render(request, "sendPhoto.html")
+
+def sendPhotoAndView(request):
+    return render(request, "sendPhotoAndView.html")
+
+def viewTranslatePhoto(request):
+    translation = translatePhoto(request)
+    print(translation.split('\n'))
+    return render(request, "viewTranslate.html", {"translateTexts": translation.split('\n')})
+
+def translate(request):
+    text = request.GET.get('text', '')
+    translate = Translate()
+    translation = translate.run(text)
+
+    return render(request, "translate.html", {"translates": translation})
+
+def extractText(request):
+    if request.method == 'POST':
+        imageFile = request.FILES.get('image')
+
+        if imageFile:
+            photo = Photo()
+            text = photo.extractText(imageFile)
+            text = text + "\nPlease choose the correct option below"
+            print(text)
+            return JsonResponse({'text': text})
+
+        else:
+            return JsonResponse({'message': 'No image file provided.'},  status=400)
+    else:
+        return JsonResponse({'message': "This view only accepts POST requests."}, status=500)
+
+def extractTextByAudio(request):
+    if request.method == 'POST':
+        audioFile = request.FILES.get('audio')
+        audio = Audio()
+        text = audio.extractText(audioFile)
+
+        return JsonResponse({'text': text})
+
+        # else:
+        #     return JsonResponse({'message': 'No image file provided.'},  status=400)
+    else:
+        return JsonResponse({'message': "This view only accepts POST requests."}, status=500)
+
+# def extractTextByAudio64(request):
+#     if request.method == 'POST':
+#         audiotext = request.POST.get('audiotext', '')
+#         converter = Base64ToWavConverter(audiotext)
+#         path = converter.convert('audio.opus')
+#         audio = Audio()
+#         print(path)
+#         text = audio.extractText64(path)
+
+#         return JsonResponse({'text': text})
+
+#         # else:
+#         #     return JsonResponse({'message': 'No image file provided.'},  status=400)
+#     else:
+#         return JsonResponse({'message': "This view only accepts POST requests."}, status=500)
+
+# @csrf_exempt
+def translatePhoto(request):
+    if request.method == 'POST':
+        imageFile = request.FILES.get('image')
+
+        if imageFile:
+            photo = Photo()
+            extracted_text = photo.extractText(imageFile)
+            translate = Translate()
+            translation = translate.run(extracted_text)
+
+            return translation[0].text
+        else:
+            return 'No image file provided.'
+    else:
+        return "This view only accepts POST requests."
 
 def db(request):
     # If you encounter errors visiting the `/db/` page on the example app, check that:
