@@ -3,9 +3,6 @@ import requests, uuid, json
 from PIL import Image
 import pytesseract
 import speech_recognition as sr
-import base64
-# import opuslib
-from io import BytesIO
 
 # class Base64ToOpusConverter:
 #     def __init__(self, base64_string):

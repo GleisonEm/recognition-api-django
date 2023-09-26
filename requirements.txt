@@ -1,16 +1,20 @@
-django>=4.2,<5.0
-gunicorn>=21.2,<22.0
-dj-database-url>=2.0,<3.0
-whitenoise[brotli]>=6.0,<7.0
-requests>=2.26,<3.0
-uuid>=1.30,<2.0
-Pillow>=10.0.0
-pytesseract>=0.3,<0.4
-
-# Uncomment these lines to use a Postgres database. Both are needed, since in production
-# (which uses Linux) we want to install from source, so that security updates from the
-# underlying Heroku stack image are picked up automatically, thanks to dynamic linking.
-# On other platforms/in development, the precompiled binary package is used instead, to
-# speed up installation and avoid errors from missing libraries/headers.
-#psycopg; sys_platform == "linux"
-#psycopg[binary]; sys_platform != "linux"
+asgiref==3.7.2
+Brotli==1.0.9
+certifi==2023.7.22
+charset-normalizer==3.2.0
+dj-database-url==2.0.0
+Django==4.2.4
+gunicorn==21.2.0
+idna==3.4
+opuslib==3.0.1
+packaging==23.1
+Pillow==10.0.0
+pytesseract==0.3.10
+requests==2.31.0
+SpeechRecognition==3.10.0
+sqlparse==0.4.4
+typing_extensions==4.7.1
+tzdata==2023.3
+urllib3==2.0.4
+uuid==1.30
+whitenoise==6.5.0
