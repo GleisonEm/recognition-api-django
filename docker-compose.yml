@@ -1,7 +1,9 @@
 version: '3'
 services:
   web:
-    image: gemanueldev/recognition-django  # Use a imagem que você construiu
+    build:
+      context: .
+      dockerfile: Dockerfile  # Use a imagem que você construiu
     container_name: recognition_django
     restart: always
     ports:

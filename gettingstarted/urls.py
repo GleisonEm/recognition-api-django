@@ -27,7 +27,7 @@ urlpatterns = [
     path("sendPhoto/", hello.views.sendPhoto, name="sendPhoto"),
     path("viewTranslatePhoto/", hello.views.viewTranslatePhoto, name="viewTranslatePhoto"),
     path("sendPhotoAndView/", hello.views.sendPhotoAndView, name="sendPhotoAndView"),
-    path("extractText/", hello.views.extractText, name="extractText"),
+    path("extractText", hello.views.extractText, name="extractText"),
     path("extractTextByAudio", hello.views.extractTextByAudio, name="extractTextByAudio"),
     # path("extractTextByAudio64", hello.views.extractTextByAudio64, name="extractTextByAudio64"),
     # Uncomment this and the entry in `INSTALLED_APPS` if you wish to use the Django admin feature:

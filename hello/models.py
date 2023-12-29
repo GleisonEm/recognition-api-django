@@ -3,6 +3,7 @@ import requests, uuid, json
 from PIL import Image
 import pytesseract
 import speech_recognition as sr
+import os
 
 # class Base64ToOpusConverter:
 #     def __init__(self, base64_string):
@@ -89,7 +90,11 @@ class Translate:
 class Photo():
     @staticmethod
     def extractText(image):
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        pytesseractPath = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        if os.name == 'posix':
+            pytesseractPath = r'/usr/bin/tesseract'
+
+        pytesseract.pytesseract.tesseract_cmd = pytesseractPath
         image = Image.open(image)
         return pytesseract.image_to_string(image)
 
