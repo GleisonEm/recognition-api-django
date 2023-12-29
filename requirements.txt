@@ -15,6 +15,6 @@ SpeechRecognition==3.10.0
 sqlparse==0.4.4
 typing_extensions==4.7.1
 tzdata==2023.3
-urllib3==2.0.4
+urllib3==2.1.0
 uuid==1.30
 whitenoise==6.5.0
