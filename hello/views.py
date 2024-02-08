@@ -6,6 +6,7 @@ from .models import Translate
 from .models import Photo
 from .models import Audio
 from .models import Greeting
+import json
 # from .models import Base64ToWavConverter
 
 # Create your views here.
@@ -47,6 +48,22 @@ def extractText(request):
             return JsonResponse({'message': 'No image file provided.'},  status=400)
     else:
         return JsonResponse({'message': "This view only accepts POST requests."}, status=500)
+
+def save_json(request):
+    if request.method == 'POST':
+        try:
+            # Carrega os dados do corpo da requisição
+            request_data = json.loads(request.body)
+
+            # Salva os dados em um arquivo JSON
+            with open('data.json', 'w') as json_file:
+                json.dump(request_data, json_file, indent=4)
+
+            return JsonResponse({"message": "Dados salvos com sucesso."}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "Erro ao decodificar JSON."}, status=400)
+    else:
+        return JsonResponse({"message": "Apenas requisições POST são aceitas."}, status=405)
 
 def extractTextByAudio(request):
     if request.method == 'POST':
